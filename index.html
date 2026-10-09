@@ -1,0 +1,768 @@
+<!doctype html>
+<!--
+  ============================================================================
+  «ИИ для себя и для работы» — одностраничный сайт видеокурса.
+
+  КАК ВСТАВИТЬ ВИДЕО С KINESCOPE
+  ------------------------------
+  1. Откройте этот файл в любом текстовом редакторе.
+  2. Найдите ниже блок  const LESSONS = [ ... ]  (в начале <script>).
+  3. У каждого урока есть поле   kinescope: ""
+     Впишите в кавычки id видео из Kinescope, например:
+         kinescope: "abcDEF123456"
+     (id — это хвост ссылки вида https://kinescope.io/embed/abcDEF123456
+      или https://kinescope.io/abcDEF123456).
+  4. Сохраните файл. Пока поле пустое, вместо плеера показывается
+     обложка урока с надписью «Видео скоро появится здесь».
+
+  Будущие уроки добавляются в массив UPCOMING (там же), а список
+  готовых уроков — копированием любого объекта в LESSONS.
+  Все пути относительные: сайт можно класть в любую подпапку.
+  ============================================================================
+-->
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ИИ для себя и для работы — видеокурс</title>
+<meta name="description" content="Бесплатный видеокурс Александра Аникитина о том, как пользоваться ИИ без программирования: от первого запроса до собственного бота, который пишет посты для канала. Простым языком, с шаблонами, которые можно скопировать.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ИИ для себя и для работы — видеокурс">
+<meta property="og:description" content="Бесплатный видеокурс о том, как пользоваться ИИ без программирования: от первого запроса до собственного бота, который пишет посты для канала.">
+<meta property="og:image" content="https://aaanikitinwork.github.io/ai-course/assets/l0.jpg">
+<meta name="theme-color" content="#0a4fd8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a4fd8'/%3E%3Crect x='4' y='5' width='24' height='6' rx='2' fill='%233a8cff'/%3E%3Crect x='4' y='12' width='24' height='15' rx='2' fill='%23fff9e6'/%3E%3Crect x='21' y='6' width='5' height='4' rx='1' fill='%23e03a2a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ----------------------------------------------------------------------
+   Токены
+---------------------------------------------------------------------- */
+:root{
+  --sky-top:#1b57d0; --sky-mid:#3d84ef; --sky-low:#8cc0ff; --sky-horizon:#d2e8ff;
+  --hill-top:#8fdc52; --hill-mid:#4eb21f; --hill-deep:#2e8c12;
+  --xp-1:#3a8cff; --xp-2:#0a4fd8; --xp-3:#0838a8; --xp-frame:#0a46c4; --xp-dark:#0b2a6b;
+  --paper:#fffbea; --paper-2:#fff6cf; --ink:#13203a; --muted:#5a6a88; --line:#dfe6f3;
+  --gold:#ffd84a; --red:#e03a2a; --green:#2f9c18;
+  --font-pixel:"Pixelify Sans","Press Start 2P",ui-monospace,monospace;
+  --font-text:"Open Sans","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  --shadow-win:0 30px 60px -18px rgba(4,24,80,.55), 0 10px 22px -10px rgba(4,24,80,.35);
+  --shadow-soft:0 14px 30px -14px rgba(4,24,80,.45);
+  --radius-win:9px;
+  --container:1160px;
+  --taskbar-h:52px;
+  --ease:cubic-bezier(.22,.8,.26,1);
+}
+@media (max-width:640px){ :root{ --taskbar-h:48px; } }
+
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body{
+  margin:0; min-height:100vh; color:var(--ink); font-family:var(--font-text);
+  font-size:17px; line-height:1.6; overflow-x:hidden;
+  padding-bottom:calc(var(--taskbar-h) + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-mid) 40%,var(--sky-low) 75%,var(--sky-horizon) 100%) fixed;
+}
+@media (pointer:fine){
+  body{ cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M3 2l0 17 4.5-4 3.3 7.5 3.2-1.4-3.3-7.4 6.3-.1z' fill='%23fff' stroke='%23000' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E") 3 2, auto; }
+  a, button, .ch, summary{ cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M9 2.5h2.6v8h.9V5h2.6v6h.9V6.5h2.6v5h.9V9h2.5v8.5c0 3.2-2.3 5.5-5.5 5.5h-3.3c-2 0-3.4-.9-4.6-2.7L5.4 15.6c-.9-1.4.6-2.9 1.9-1.9L9 15.2z' fill='%23fff' stroke='%23000' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E") 10 3, pointer; }
+}
+img{ max-width:100%; display:block; }
+a{ color:var(--xp-2); }
+button{ font:inherit; color:inherit; }
+::selection{ background:var(--gold); color:var(--xp-dark); }
+:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+
+/* ----------------------------------------------------------------------
+   Фон: облака, холм, зерно
+---------------------------------------------------------------------- */
+.sky{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.cloud{ position:absolute; width:320px; height:110px; opacity:.85; will-change:transform; filter:drop-shadow(0 18px 24px rgba(10,50,140,.18)); }
+.cloud::before,.cloud::after,.cloud i{ content:""; position:absolute; background:linear-gradient(180deg,#fff 0%,#eaf3ff 100%); border-radius:999px; box-shadow:inset 0 -10px 18px rgba(120,160,220,.18); }
+.cloud::before{ left:0; bottom:0; width:100%; height:46%; }
+.cloud::after{ left:12%; bottom:20%; width:38%; height:80%; }
+.cloud i{ left:42%; bottom:18%; width:34%; height:64%; }
+.cloud i+i{ left:66%; bottom:16%; width:26%; height:48%; }
+.cloud i+i+i{ left:4%; bottom:14%; width:22%; height:44%; }
+.c1{ top:9%; left:-6%; transform:scale(1.15); animation:drift 90s linear infinite; }
+.c2{ top:26%; right:-10%; transform:scale(.8); opacity:.7; animation:drift 130s linear infinite reverse; }
+.c3{ top:52%; left:18%; transform:scale(.55); opacity:.55; animation:drift 160s linear infinite; }
+.c4{ top:4%; left:52%; transform:scale(.7); opacity:.6; animation:drift 110s linear infinite reverse; }
+@keyframes drift{ from{ margin-left:0 } to{ margin-left:140px } }
+.hill{
+  position:fixed; left:50%; bottom:calc(var(--taskbar-h) - 22vh); z-index:0; pointer-events:none;
+  width:190vw; height:52vh; transform:translateX(-50%); border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  background:radial-gradient(ellipse at 50% 0%, var(--hill-top) 0%, var(--hill-mid) 42%, var(--hill-deep) 100%);
+  box-shadow:0 -30px 80px -30px rgba(0,60,0,.35), inset 0 18px 40px rgba(255,255,255,.18);
+}
+.grain{ position:fixed; inset:0; z-index:60; pointer-events:none; opacity:.07; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media (max-width:768px){ .grain{ display:none; } .cloud{ animation:none; filter:none; } .c3{ display:none; } }
+
+/* ----------------------------------------------------------------------
+   Сетка
+---------------------------------------------------------------------- */
+.page{ position:relative; z-index:1; }
+.container{ width:calc(100% - 32px); max-width:var(--container); margin-inline:auto; }
+@media (min-width:1024px){ .container{ width:calc(100% - 96px); } }
+
+/* Пиксельные заголовки */
+.px{ font-family:var(--font-pixel); font-weight:700; line-height:1; letter-spacing:.01em; color:#fff;
+  text-shadow:4px 4px 0 var(--xp-dark), 0 18px 40px rgba(4,24,80,.35); }
+h1.px{ font-size:clamp(40px, 7.2vw, 104px); margin:0; text-wrap:balance; }
+h2.px{ font-size:clamp(34px, 4.4vw, 60px); margin:0; }
+@media (max-width:640px){ .px{ text-shadow:3px 3px 0 var(--xp-dark), 0 14px 30px rgba(4,24,80,.35); } }
+
+/* ----------------------------------------------------------------------
+   Окно XP
+---------------------------------------------------------------------- */
+.win{ background:var(--xp-frame); border-radius:var(--radius-win) var(--radius-win) 4px 4px; padding:0 4px 4px; box-shadow:var(--shadow-win); position:relative; }
+.win::before{ content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.45), inset 0 0 0 1px rgba(0,20,80,.35); }
+.win-bar{ display:flex; align-items:center; gap:12px; min-height:34px; padding:6px 6px 6px 12px; color:#fff; font-weight:700; font-size:15px; letter-spacing:.01em;
+  background:linear-gradient(180deg,var(--xp-1) 0%,var(--xp-2) 55%,var(--xp-3) 100%); border-radius:var(--radius-win) var(--radius-win) 0 0; text-shadow:0 1px 1px rgba(0,0,0,.45); }
+.win-bar .ico{ width:16px; height:16px; flex:none; border-radius:3px; background:var(--paper); box-shadow:inset 0 0 0 2px var(--xp-3); }
+.win-bar .ttl{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.xbtn{ flex:none; width:24px; height:22px; border:1px solid #fff; border-radius:4px; padding:0; display:grid; place-items:center;
+  background:linear-gradient(180deg,#f0876f 0%,#d94b36 50%,#c0321f 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.5), 0 1px 2px rgba(0,0,0,.35); color:#fff; }
+.xbtn svg{ width:11px; height:11px; }
+.xbtn.ghost{ background:linear-gradient(180deg,#5aa0ff 0%,#2a6fe6 55%,#1a56c8 100%); }
+.win-body{ background:var(--paper); border-radius:0 0 3px 3px; }
+
+/* ----------------------------------------------------------------------
+   Hero
+---------------------------------------------------------------------- */
+.hero{ padding:clamp(28px, 6vw, 72px) 0 clamp(40px, 7vw, 96px); min-height:min(calc(100vh - var(--taskbar-h)), 860px); display:flex; align-items:center; }
+.hero-grid{ display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:clamp(28px, 5vw, 72px); align-items:start; }
+.eyebrow{ display:inline-flex; align-items:center; gap:10px; color:#fff; font-weight:700; font-size:14px; letter-spacing:.14em; text-transform:uppercase; opacity:.95; margin-bottom:22px; text-shadow:0 1px 2px rgba(0,30,90,.5); }
+.eyebrow::before{ content:""; width:10px; height:10px; background:var(--gold); box-shadow:2px 2px 0 var(--xp-dark); }
+.hero-sub{ margin:22px 0 0; color:#fff; font-size:clamp(17px, 1.6vw, 21px); font-weight:600; text-shadow:0 1px 2px rgba(0,30,90,.5); display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; }
+.hero-sub .dot{ opacity:.6; }
+.notepad{ margin-top:34px; max-width:720px; }
+.notepad .win-body{ padding:18px 22px 20px; font-size:clamp(17px, 1.45vw, 19.5px); line-height:1.62; min-height:3.2em; position:relative; }
+.notepad .win-body::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:6px; background:repeating-linear-gradient(180deg,transparent 0 8px,rgba(10,79,216,.18) 8px 9px); }
+.caret{ display:inline-block; width:2px; height:1.1em; background:var(--ink); vertical-align:-.18em; margin-left:2px; animation:blink 1s steps(1) infinite; }
+@keyframes blink{ 50%{ opacity:0 } }
+.cta{ display:flex; flex-wrap:wrap; gap:14px; margin-top:28px; align-items:center; }
+.btn{ display:inline-flex; align-items:center; gap:10px; padding:13px 22px; border-radius:8px; font-weight:700; font-size:16px; text-decoration:none; border:1px solid rgba(0,0,0,.25); transition:transform .18s var(--ease), box-shadow .18s var(--ease); }
+.btn:hover{ transform:translateY(-2px); }
+.btn:active{ transform:translateY(1px); }
+.btn-green{ color:#fff; background:linear-gradient(180deg,#6cd43b 0%,#3eab1b 55%,#2d8e12 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 10px 24px -8px rgba(20,80,0,.55); text-shadow:0 1px 1px rgba(0,0,0,.3); }
+.btn-paper{ color:var(--xp-dark); background:linear-gradient(180deg,#fff 0%,#eef3fc 100%); box-shadow:inset 0 1px 0 #fff, 0 10px 24px -10px rgba(4,24,80,.5); }
+.btn svg{ width:18px; height:18px; flex:none; }
+
+/* Эфир */
+.ether{ position:relative; width:100%; }
+.ether .win-bar{ gap:9px; }
+.rec{ width:12px; height:12px; border-radius:50%; background:var(--red); box-shadow:0 0 0 2px rgba(255,255,255,.35), 0 0 12px rgba(255,60,40,.9); animation:rec 1.6s ease-in-out infinite; }
+@keyframes rec{ 50%{ opacity:.35; box-shadow:0 0 0 2px rgba(255,255,255,.35), 0 0 2px rgba(255,60,40,.4) } }
+.ether .win-body{ padding:6px; background:#dfe6f3; }
+.portrait{ position:relative; overflow:hidden; border-radius:3px; background:#7d7f83; aspect-ratio:480/643; box-shadow:inset 0 0 0 1px rgba(0,0,0,.35); }
+.portrait img{ width:100%; height:100%; object-fit:cover; transform-origin:50% 100%; animation:breath 5.2s ease-in-out infinite; }
+@keyframes breath{ 0%,100%{ transform:scale(1) translateY(0) } 50%{ transform:scale(1.018) translateY(-2px) } }
+.portrait::after{ content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(180deg,rgba(255,255,255,0) 0 3px,rgba(0,0,0,.055) 3px 4px); mix-blend-mode:multiply; }
+.portrait .sweep{ position:absolute; left:0; right:0; height:38px; top:-40px; background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.14),rgba(255,255,255,0)); animation:sweep 7s linear infinite; pointer-events:none; }
+@keyframes sweep{ 0%{ top:-40px } 60%,100%{ top:110% } }
+.ether-foot{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:9px 4px 2px; font-size:13px; color:var(--xp-dark); font-weight:600; white-space:nowrap; }
+.ether-foot .name{ overflow:hidden; text-overflow:ellipsis; }
+.ether-foot .live{ display:inline-flex; align-items:center; gap:6px; }
+.ether-foot .live::before{ content:""; width:8px; height:8px; background:var(--green); border-radius:50%; }
+
+/* Наклейка */
+.sticker{ position:absolute; z-index:3; background:var(--gold); color:var(--xp-dark); border:3px solid var(--xp-dark); padding:8px 14px; font-family:var(--font-pixel); font-weight:700; font-size:22px; line-height:1; transform:rotate(-7deg);
+  box-shadow:4px 5px 0 var(--xp-dark), 0 18px 30px -12px rgba(4,24,80,.5); white-space:nowrap; }
+.sticker::before{ content:""; position:absolute; left:50%; top:-14px; width:54px; height:16px; transform:translateX(-50%) rotate(2deg); background:rgba(255,255,255,.55); border:1px solid rgba(11,42,107,.25); backdrop-filter:blur(1px); }
+.ether .sticker{ left:-26px; top:58px; }
+.sticker.s-anim{ animation:peel .7s var(--ease) both; animation-delay:.9s; }
+@keyframes peel{ from{ opacity:0; transform:rotate(-14deg) scale(.6) translateY(-20px) } to{ opacity:1; transform:rotate(-7deg) scale(1) translateY(0) } }
+
+/* ----------------------------------------------------------------------
+   Секции
+---------------------------------------------------------------------- */
+.section{ padding:clamp(28px, 5vw, 64px) 0; }
+.sec-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:clamp(20px, 3vw, 34px); }
+.sec-head p{ margin:0; color:#fff; font-weight:600; text-shadow:0 1px 2px rgba(0,30,90,.5); max-width:520px; }
+
+/* ----------------------------------------------------------------------
+   Уроки
+---------------------------------------------------------------------- */
+.lessons{ display:flex; flex-direction:column; gap:16px; }
+.lesson{ scroll-margin-top:24px; transition:transform .3s var(--ease); }
+.lesson .win-bar{ padding:0; min-height:0; background:none; border-radius:var(--radius-win) var(--radius-win) 0 0; }
+.lhead{ width:100%; display:grid; grid-template-columns:auto minmax(0,1fr) auto auto; align-items:center; gap:14px; padding:12px 8px 12px 14px; border:0; text-align:left; background:linear-gradient(180deg,var(--xp-1) 0%,var(--xp-2) 55%,var(--xp-3) 100%); color:#fff; border-radius:var(--radius-win) var(--radius-win) 0 0; transition:filter .2s; }
+.lhead:hover{ filter:brightness(1.07); }
+.lesson:not(.open) .lhead{ border-radius:var(--radius-win) var(--radius-win) 3px 3px; }
+.lesson:not(.open) .win{ padding-bottom:4px; }
+.num{ font-family:var(--font-pixel); font-weight:700; font-size:34px; line-height:1; min-width:52px; height:52px; display:grid; place-items:center; color:var(--xp-dark); background:var(--gold); border-radius:6px; box-shadow:2px 2px 0 var(--xp-dark), inset 0 1px 0 rgba(255,255,255,.6); padding:0 10px; }
+.lt{ min-width:0; }
+.lt .t{ display:block; font-weight:700; font-size:clamp(16px, 1.5vw, 20px); line-height:1.3; text-shadow:0 1px 1px rgba(0,0,0,.45); }
+.lt .m{ display:block; font-size:13.5px; opacity:.88; margin-top:3px; font-weight:600; }
+.lt .m b{ font-weight:700; color:var(--gold); }
+.dur{ display:inline-flex; align-items:center; gap:7px; font-weight:700; font-size:14px; padding:6px 10px; border-radius:6px; background:rgba(0,20,80,.28); box-shadow:inset 0 1px 0 rgba(255,255,255,.18); white-space:nowrap; }
+.dur svg{ width:14px; height:14px; }
+.lhead .xbtn{ pointer-events:none; }
+.lesson.open .lhead .xbtn.ghost{ display:none; }
+.lesson:not(.open) .lhead .xbtn:not(.ghost){ display:none; }
+
+.lbody{ display:none; transform-origin:12% 0; }
+.lesson.open .lbody{ display:block; animation:winOpen .38s var(--ease) both; }
+@keyframes winOpen{ from{ opacity:0; transform:scale(.94) translateY(-14px) } to{ opacity:1; transform:none } }
+.lgrid{ display:grid; grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr); gap:22px; padding:16px; }
+.video{ position:relative; aspect-ratio:16/9; width:100%; background:#0b2a6b; border-radius:4px; overflow:hidden; box-shadow:0 12px 26px -14px rgba(4,24,80,.65), inset 0 0 0 1px rgba(0,0,0,.4); }
+.video iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+.ph{ position:absolute; inset:0; display:grid; place-items:center; }
+.ph img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(.85); transform:scale(1.02); }
+.ph::before{ content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(6,28,90,.35) 0%,rgba(6,28,90,.72) 100%); }
+.ph-dlg{ position:relative; z-index:1; width:min(86%, 400px); background:var(--xp-frame); border-radius:7px 7px 3px 3px; padding:0 3px 3px; box-shadow:0 24px 50px -16px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.4); }
+.ph-dlg .win-bar{ min-height:28px; font-size:13px; padding:4px 4px 4px 10px; border-radius:6px 6px 0 0; }
+.ph-dlg .win-bar .xbtn{ width:20px; height:18px; }
+.ph-dlg .win-body{ padding:14px 16px 16px; text-align:center; }
+.ph-dlg .t{ font-weight:700; font-size:clamp(14px, 1.2vw, 17px); margin:0 0 10px; }
+.ph-dlg .s{ margin:0 0 10px; font-size:13px; color:var(--muted); }
+.ldbar{ height:16px; border:1px solid #9bb0d9; border-radius:3px; background:#fff; overflow:hidden; position:relative; box-shadow:inset 0 1px 2px rgba(0,0,0,.15); }
+.ldbar i{ position:absolute; top:2px; bottom:2px; left:-60px; width:54px; background:repeating-linear-gradient(90deg,#3f8bff 0 10px,transparent 10px 14px); animation:ld 2.4s linear infinite; border-radius:2px; }
+@keyframes ld{ to{ left:100% } }
+.intro{ margin:16px 0 0; font-size:16.5px; line-height:1.62; }
+.pdf{ margin-top:16px; padding:14px 16px; border:1px solid #e9d99a; border-radius:7px; background:linear-gradient(180deg,#fff9df 0%,#fff2bf 100%); display:grid; grid-template-columns:auto minmax(0,1fr); gap:14px; align-items:center; box-shadow:inset 0 1px 0 #fff; }
+.pdf .pico{ width:44px; height:54px; position:relative; background:#fff; border:1.5px solid var(--xp-dark); border-radius:3px; box-shadow:2px 2px 0 var(--xp-dark); }
+.pdf .pico::before{ content:""; position:absolute; right:-1.5px; top:-1.5px; width:14px; height:14px; background:var(--gold); border-left:1.5px solid var(--xp-dark); border-bottom:1.5px solid var(--xp-dark); }
+.pdf .pico::after{ content:"PDF"; position:absolute; left:0; right:0; bottom:7px; text-align:center; font-family:var(--font-pixel); font-weight:700; font-size:13px; color:var(--xp-dark); }
+.pdf p{ margin:0; font-size:14.5px; line-height:1.5; color:#4a5572; }
+.pdf .btn{ padding:9px 14px; font-size:14.5px; margin-bottom:8px; }
+.chapters{ list-style:none; margin:0; padding:0; border:1px solid var(--line); border-radius:6px; background:#fff; overflow:hidden; }
+.chapters-h{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; background:#f3f6fc; border-bottom:1px solid var(--line); font-weight:700; font-size:13.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+.ch{ width:100%; display:grid; grid-template-columns:56px minmax(0,1fr); gap:10px; align-items:start; padding:9px 12px; border:0; border-bottom:1px solid var(--line); background:#fff; text-align:left; font-size:15px; line-height:1.4; transition:background .15s; }
+.chapters li:last-child .ch{ border-bottom:0; }
+.ch:hover{ background:#f0f5ff; }
+.ch .tc{ font-weight:700; font-size:14px; color:var(--xp-2); padding-top:2px; font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+.ch[aria-disabled="true"]{ cursor:default; }
+.ch[aria-disabled="true"]:hover{ background:#fff; }
+.ch[aria-disabled="true"] .tc{ color:#8a98b8; }
+
+/* ----------------------------------------------------------------------
+   Скоро
+---------------------------------------------------------------------- */
+.soon{ position:relative; }
+.soon .win-body{ padding:clamp(16px, 2.5vw, 28px); }
+.soon-list{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:8px 20px; }
+.soon-list li{ display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:6px; color:#55627f; font-weight:600; border:1px dashed #cfd8ea; background:rgba(255,255,255,.55); user-select:none; }
+.soon-list li i{ flex:none; width:22px; height:16px; background:repeating-linear-gradient(90deg,#9fb0d4 0 3px,transparent 3px 5px); border:2px solid #9fb0d4; border-radius:2px; opacity:.8; }
+.soon-list li span{ min-width:0; }
+.soon-foot{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-top:22px; padding-top:18px; border-top:1px solid #ead9a0; font-weight:700; color:var(--xp-dark); }
+.soon-foot .sticker{ position:static; transform:rotate(-2deg); font-size:19px; white-space:normal; }
+.soon-foot .sticker::before{ display:none; }
+.soon-foot .lock{ display:inline-flex; align-items:center; gap:8px; color:var(--muted); font-weight:600; font-size:14.5px; }
+.soon-foot .lock svg{ width:16px; height:16px; }
+
+/* ----------------------------------------------------------------------
+   Футер
+---------------------------------------------------------------------- */
+.foot{ padding:clamp(28px, 5vw, 64px) 0 clamp(28px, 5vw, 56px); color:#fff; text-shadow:0 1px 2px rgba(0,30,90,.55); }
+.foot-in{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px 28px; font-weight:600; }
+.foot a{ color:#fff; text-decoration:none; border-bottom:2px solid var(--gold); padding-bottom:1px; }
+.foot .author{ display:inline-flex; align-items:center; gap:12px; }
+.foot .author img{ width:36px; height:36px; object-fit:cover; object-position:50% 25%; border-radius:4px; border:2px solid #fff; box-shadow:2px 2px 0 var(--xp-dark); }
+
+/* ----------------------------------------------------------------------
+   Панель задач
+---------------------------------------------------------------------- */
+.taskbar{ position:fixed; left:0; right:0; bottom:0; z-index:50; height:calc(var(--taskbar-h) + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom); display:flex; align-items:stretch; gap:8px;
+  background:linear-gradient(180deg,#3b7ef5 0%,#245edb 8%,#245edb 86%,#1a46b5 100%); box-shadow:0 -1px 0 rgba(255,255,255,.3), 0 -14px 30px -12px rgba(4,24,80,.5); }
+.start{ flex:none; display:inline-flex; align-items:center; gap:10px; padding:0 22px 0 14px; border:0; color:#fff; font-weight:700; font-style:italic; font-size:19px; text-shadow:0 1px 1px rgba(0,0,0,.45);
+  background:linear-gradient(180deg,#6fd845 0%,#3ba81c 50%,#2c8e12 100%); border-radius:0 12px 12px 0; box-shadow:inset 0 1px 0 rgba(255,255,255,.5), inset -3px 0 6px rgba(0,0,0,.2), 2px 0 6px rgba(0,0,0,.25); transition:filter .15s; }
+.start:hover{ filter:brightness(1.1); }
+.start[aria-expanded="true"]{ filter:brightness(.88); box-shadow:inset 0 2px 6px rgba(0,0,0,.4); }
+.start .flag{ width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff,#e8f6df 60%,#bfe0aa); box-shadow:inset 0 0 0 1px rgba(0,60,0,.25),0 1px 2px rgba(0,0,0,.35); display:grid; place-items:center; }
+.start .flag svg{ width:11px; height:11px; margin-left:2px; }
+.tasks{ flex:1; min-width:0; display:flex; align-items:center; gap:6px; padding:6px 0; overflow:hidden; }
+.task{ display:inline-flex; align-items:center; gap:9px; max-width:100%; height:100%; padding:0 14px; border-radius:4px; border:0; color:#fff; font-weight:600; font-size:14px; background:linear-gradient(180deg,#1f4fc3 0%,#1b47b3 100%); box-shadow:inset 0 1px 2px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.2); text-shadow:0 1px 1px rgba(0,0,0,.4); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0; transform:translateY(6px); transition:opacity .25s, transform .25s; }
+.task.on{ opacity:1; transform:none; }
+.task .ico{ width:14px; height:14px; flex:none; border-radius:2px; background:var(--paper); box-shadow:inset 0 0 0 2px var(--xp-3); }
+.task span{ overflow:hidden; text-overflow:ellipsis; }
+.tray{ flex:none; display:flex; align-items:center; gap:14px; padding:0 16px 0 14px; color:#fff; font-weight:600; font-size:14px; background:linear-gradient(180deg,#1a8cff 0%,#0f6ae6 100%); box-shadow:inset 2px 0 4px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.35); }
+.tray .lang{ font-size:12px; letter-spacing:.08em; padding:2px 6px; border:1px solid rgba(255,255,255,.6); border-radius:3px; }
+.tray .spk{ width:14px; height:14px; }
+.clock{ font-variant-numeric:tabular-nums; min-width:3.2em; text-align:right; }
+@media (max-width:640px){ .start{ font-size:17px; padding:0 16px 0 12px; } .tray .lang,.tray .spk{ display:none; } .tray{ padding:0 14px; } .task{ font-size:13px; padding:0 10px; } }
+
+/* Меню «Пуск» */
+.menu{ position:fixed; left:0; bottom:calc(var(--taskbar-h) + env(safe-area-inset-bottom)); z-index:55; width:min(92vw, 420px); background:var(--xp-frame); border-radius:0 10px 0 0; padding:0 3px 3px 0; box-shadow:0 -14px 50px -14px rgba(0,0,0,.6), 6px 0 30px -12px rgba(0,0,0,.4);
+  transform-origin:0 100%; display:none; }
+.menu.open{ display:block; animation:menuIn .26s var(--ease) both; }
+@keyframes menuIn{ from{ opacity:0; transform:translateY(16px) scale(.96) } to{ opacity:1; transform:none } }
+.menu-h{ display:flex; align-items:center; gap:12px; padding:12px 16px; color:#fff; font-weight:700; font-size:16px; background:linear-gradient(180deg,var(--xp-1) 0%,var(--xp-2) 60%,var(--xp-3) 100%); border-radius:0 9px 0 0; text-shadow:0 1px 1px rgba(0,0,0,.45); }
+.menu-h img{ width:40px; height:40px; object-fit:cover; object-position:50% 25%; border-radius:4px; border:2px solid #fff; box-shadow:0 2px 4px rgba(0,0,0,.4); }
+.menu-h small{ display:block; font-weight:600; font-size:12.5px; opacity:.85; }
+.menu-b{ background:#fff; padding:8px; display:grid; gap:2px; max-height:min(60vh, 520px); overflow:auto; }
+.menu-b a,.menu-b button{ display:grid; grid-template-columns:30px minmax(0,1fr); align-items:center; gap:12px; width:100%; padding:9px 10px; border:0; border-radius:5px; background:none; color:var(--ink); font-weight:600; font-size:15px; text-align:left; text-decoration:none; transition:background .12s, color .12s; }
+.menu-b a:hover,.menu-b button:hover{ background:var(--xp-2); color:#fff; }
+.menu-b a:hover small,.menu-b button:hover small{ color:#dfe9ff; }
+.menu-b .mn{ font-family:var(--font-pixel); font-weight:700; font-size:20px; color:var(--xp-dark); background:var(--gold); border-radius:4px; height:30px; display:grid; place-items:center; box-shadow:1.5px 1.5px 0 var(--xp-dark); }
+.menu-b a:hover .mn{ box-shadow:1.5px 1.5px 0 #000; }
+.menu-b small{ display:block; font-size:12.5px; color:var(--muted); font-weight:600; }
+.menu-b .sep{ height:1px; background:var(--line); margin:6px 4px; }
+.menu-b .mi{ width:26px; height:26px; border-radius:5px; display:grid; place-items:center; background:#eef3fc; color:var(--xp-2); }
+.menu-b .mi svg{ width:15px; height:15px; }
+.menu-f{ background:linear-gradient(180deg,#245edb 0%,#1a46b5 100%); padding:8px 12px; color:#fff; font-size:12.5px; font-weight:600; border-radius:0 0 3px 0; display:flex; justify-content:space-between; align-items:center; }
+.menu-f button{ background:none; border:0; color:#fff; font-weight:700; font-size:12.5px; padding:4px 8px; border-radius:4px; }
+.menu-f button:hover{ background:rgba(255,255,255,.18); }
+.scrim{ position:fixed; inset:0; z-index:54; display:none; }
+.scrim.open{ display:block; }
+
+/* ----------------------------------------------------------------------
+   Появление при скролле
+---------------------------------------------------------------------- */
+.reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+.reveal.in{ opacity:1; transform:none; }
+.reveal.d1{ transition-delay:.08s } .reveal.d2{ transition-delay:.16s } .reveal.d3{ transition-delay:.24s }
+
+/* ----------------------------------------------------------------------
+   Адаптив
+---------------------------------------------------------------------- */
+@media (max-width:980px){
+  .hero-grid{ grid-template-columns:minmax(0,1fr) 240px; }
+  .lgrid{ grid-template-columns:1fr; }
+}
+@media (max-width:760px){
+  .hero{ min-height:0; padding-top:24px; }
+  .hero-grid{ grid-template-columns:1fr; gap:26px; }
+  .ether{ width:min(190px, 56vw); margin:0 auto 4px; order:-1; }
+  .ether .sticker{ left:-22px; top:44px; font-size:17px; padding:6px 10px; }
+  .ether-foot{ font-size:12px; }
+  .ether-foot .name{ display:none; }
+  .notepad{ margin-top:22px; }
+  .notepad .win-body{ padding:14px 16px 16px; }
+  .cta{ margin-top:22px; }
+  .btn{ width:100%; justify-content:center; }
+  .lhead{ grid-template-columns:auto minmax(0,1fr) auto; gap:10px; padding:10px 8px 10px 10px; }
+  .lhead .dur{ grid-column:2; justify-self:start; padding:3px 8px; font-size:12.5px; margin-top:-2px; }
+  .lhead .xbtn{ grid-column:3; grid-row:1; }
+  .num{ min-width:44px; height:44px; font-size:28px; grid-row:1 / span 2; }
+  .lgrid{ padding:10px; gap:16px; }
+  .video{ border-radius:3px; }
+  .ph-dlg .win-body{ padding:10px 12px 12px; }
+  .intro{ font-size:15.5px; }
+  .pdf{ grid-template-columns:1fr; }
+  .pdf .pico{ display:none; }
+  .ch{ grid-template-columns:48px minmax(0,1fr); font-size:14.5px; }
+  .soon-list{ grid-template-columns:1fr; }
+  .soon-foot{ justify-content:center; text-align:center; }
+  .foot-in{ justify-content:center; text-align:center; }
+}
+
+/* ----------------------------------------------------------------------
+   Снижение движения
+---------------------------------------------------------------------- */
+@media (prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important; }
+  .reveal{ opacity:1; transform:none; }
+  .cloud{ animation:none; }
+  .caret{ animation:none; }
+  .portrait .sweep{ display:none; }
+}
+html.static *,html.static *::before,html.static *::after{ animation:none !important; transition:none !important; }
+html.static .reveal{ opacity:1; transform:none; }
+html.static .task{ opacity:1; transform:none; }
+</style>
+</head>
+<body>
+
+<div class="sky" aria-hidden="true">
+  <div class="cloud c1" data-depth=".06"><i></i><i></i><i></i></div>
+  <div class="cloud c2" data-depth=".12"><i></i><i></i><i></i></div>
+  <div class="cloud c3" data-depth=".2"><i></i><i></i><i></i></div>
+  <div class="cloud c4" data-depth=".09"><i></i><i></i><i></i></div>
+</div>
+<div class="hill" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="page">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow reveal">Бесплатный видеокурс</div>
+        <h1 class="px reveal d1" id="course-title">ИИ для себя и&nbsp;для&nbsp;работы</h1>
+        <p class="hero-sub reveal d2"><span id="author-name">Александр Аникитин</span><span class="dot" aria-hidden="true">·</span><span id="lesson-count"></span><span class="dot" aria-hidden="true">·</span><span>конспекты к&nbsp;каждому уроку</span></p>
+
+        <div class="win notepad reveal d3" role="group" aria-label="О курсе">
+          <div class="win-bar"><span class="ico" aria-hidden="true"></span><span class="ttl">О курсе.txt — Блокнот</span><button class="xbtn" type="button" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></div>
+          <div class="win-body"><p id="lead" style="margin:0">Бесплатный видеокурс о том, как пользоваться ИИ без программирования: от первого запроса до собственного бота, который пишет посты для канала. Простым языком, с шаблонами, которые можно скопировать.</p></div>
+        </div>
+
+        <div class="cta reveal d3">
+          <a class="btn btn-green" href="#lesson-0" data-open="lesson-0"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 3.5v13l11-6.5z"/></svg>Начать с урока 0</a>
+          <a class="btn btn-paper" href="#soon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="14" height="13" rx="2"/><path d="M3 8h14M7 2v4M13 2v4"/></svg>Что дальше в курсе</a>
+        </div>
+      </div>
+
+      <div class="win ether reveal d2" aria-label="Автор курса">
+        <div class="win-bar"><span class="rec" aria-hidden="true"></span><span class="ttl">Эфир</span><button class="xbtn" type="button" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></div>
+        <div class="win-body">
+          <div class="portrait"><img src="assets/face.jpg" width="480" height="643" alt="Александр Аникитин, автор курса"><span class="sweep" aria-hidden="true"></span></div>
+          <div class="ether-foot"><span class="live">в эфире</span><span class="name">Александр Аникитин</span></div>
+        </div>
+        <span class="sticker s-anim" aria-hidden="true">Бесплатно</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- УРОКИ -->
+  <section class="section" id="lessons-section" aria-labelledby="lessons-h">
+    <div class="container">
+      <div class="sec-head reveal">
+        <h2 class="px" id="lessons-h">Уроки</h2>
+        <p>Нажмите на урок — окно раскроется: видео, оглавление с таймкодами и конспект в PDF.</p>
+      </div>
+      <div class="lessons" id="lessons"></div>
+      <noscript><p style="color:#fff;font-weight:700">Включите JavaScript, чтобы увидеть список уроков.</p></noscript>
+    </div>
+  </section>
+
+  <!-- СКОРО -->
+  <section class="section" id="soon" aria-labelledby="soon-h">
+    <div class="container">
+      <div class="sec-head reveal">
+        <h2 class="px" id="soon-h">Скоро</h2>
+        <p>Темы следующих уроков. Ссылки появятся, когда выйдет видео.</p>
+      </div>
+      <div class="win soon reveal d1">
+        <div class="win-bar"><span class="ico" aria-hidden="true"></span><span class="ttl">Следующие уроки</span><button class="xbtn" type="button" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></div>
+        <div class="win-body">
+          <ul class="soon-list" id="upcoming" aria-label="Будущие уроки"></ul>
+          <div class="soon-foot">
+            <span class="lock"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>Пока недоступно</span>
+            <span class="sticker" id="schedule"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ФУТЕР -->
+  <footer class="foot">
+    <div class="container foot-in reveal">
+      <span class="author"><img src="assets/face.jpg" alt="" loading="lazy" width="36" height="36"><span>Автор курса — <b id="author-foot"></b></span></span>
+      <span>Telegram: <a id="tg-link" href="#" rel="noopener" target="_blank"></a></span>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ПАНЕЛЬ ЗАДАЧ -->
+<div class="scrim" id="scrim"></div>
+<nav class="menu" id="menu" aria-label="Меню «Пуск»">
+  <div class="menu-h"><img src="assets/face.jpg" alt="" loading="lazy" width="40" height="40"><div><span id="menu-author"></span><small>Оглавление курса</small></div></div>
+  <div class="menu-b" id="menu-list"></div>
+  <div class="menu-f"><span>ИИ для себя и для работы</span><button type="button" id="menu-top">Наверх ↑</button></div>
+</nav>
+<div class="taskbar" role="toolbar" aria-label="Панель задач">
+  <button class="start" id="start" type="button" aria-expanded="false" aria-controls="menu"><span class="flag" aria-hidden="true"><svg viewBox="0 0 10 10"><path d="M1 0 L10 5 L1 10 Z" fill="#2f8a25"/></svg></span>пуск</button>
+  <div class="tasks"><button class="task" id="task" type="button" hidden><span class="ico" aria-hidden="true"></span><span id="task-label"></span></button></div>
+  <div class="tray"><span class="lang" aria-hidden="true">RU</span><svg class="spk" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z"/><path d="M11 5.5a3.5 3.5 0 010 5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg><span class="clock" id="clock" aria-live="off">00:00</span></div>
+</div>
+
+<script>
+/* ======================================================================
+   ДАННЫЕ КУРСА — единственное место, которое нужно править.
+   Чтобы подключить видео: впишите id Kinescope в поле  kinescope: ""
+   ====================================================================== */
+const COURSE = {
+  title: "ИИ для себя и для работы",
+  author: "Александр Аникитин",
+  lead: "Бесплатный видеокурс о том, как пользоваться ИИ без программирования: от первого запроса до собственного бота, который пишет посты для канала. Простым языком, с шаблонами, которые можно скопировать.",
+  schedule: "Новые уроки — по вторникам и четвергам",
+  telegram: "https://t.me/alexanderanikitin"
+};
+
+const LESSONS = [
+  {
+    id: "lesson-0",
+    num: "0",
+    title: "С чего начать: Claude или ChatGPT",
+    duration: "4:00",
+    poster: "assets/l0.jpg",
+    pdf: "assets/lesson-0.pdf",
+    kinescope: "",
+    intro: "Попросили ИИ — а получили общие слова? Дело не в ИИ, а в том, как с ним работать. Разбираем самое начало: какой помощник выбрать, как установить и настроить, и как пользоваться, чтобы был толк.",
+    chapters: [
+      ["0:00", "Почему у одних ИИ «всё делает», а у других пишет общие слова"],
+      ["0:20", "Что ИИ может взять на себя уже сегодня"],
+      ["0:45", "Claude или ChatGPT: в чём разница и что под какую задачу"],
+      ["1:26", "Тарифы: что даёт бесплатная версия и когда стоит платить"],
+      ["2:00", "Установка из России: VPN и оплата подписки"],
+      ["2:20", "Главная настройка, которую пропускают почти все"],
+      ["2:51", "Пять правил, после которых ИИ отвечает по делу"],
+      ["3:41", "Домашнее задание"]
+    ],
+    pdfNote: "Все тезисы, сравнение тарифов и два готовых шаблона: «О себе» для настройки ИИ и подсказка, после которой ответы становятся точнее."
+  },
+  {
+    id: "lesson-1",
+    num: "1",
+    title: "Интерфейс Claude: где что находится",
+    duration: "4:45",
+    poster: "assets/l1.jpg",
+    pdf: "assets/lesson-1.pdf",
+    kinescope: "",
+    intro: "Открываем Claude и проходим по нему, как по новому офису: где файлы, какую модель выбрать, чтобы не сжечь лимит, и как сделать так, чтобы Claude помнил ваш контекст.",
+    chapters: [
+      ["0:00", "Вступление"],
+      ["0:15", "Главный экран: боковая панель и поле ввода"],
+      ["0:38", "Как прикрепить файл или фото"],
+      ["0:56", "Выбор модели: Haiku, Sonnet, Opus, Fable"],
+      ["1:48", "Как модель влияет на лимит сообщений"],
+      ["2:17", "Поиск в интернете и режим размышления"],
+      ["2:41", "Проекты: ваши файлы и инструкция в одном месте"],
+      ["3:04", "Как перенести чат в проект (и важная тонкость)"],
+      ["3:36", "Артефакты: таблицы и документы прямо в чате"],
+      ["3:55", "Настройки: инструкции и память"],
+      ["4:15", "Приложение на компьютере"],
+      ["4:26", "Домашнее задание"]
+    ],
+    pdfNote: "Четыре шпаргалки: какую модель выбрать, шаблон инструкции проекта, запрос на выжимку чата и пример запроса для артефакта."
+  },
+  {
+    id: "lesson-2a",
+    num: "2",
+    part: "часть 1 из 2",
+    title: "Контент-завод в Telegram-боте: собираем бота",
+    duration: "4:36",
+    poster: "assets/l2a.jpg",
+    pdf: "assets/lesson-2a.pdf",
+    kinescope: "",
+    intro: "Бот, который каждый день присылает вам готовый пост для канала, а вы только нажимаете «утвердить». Собираем с нуля, шаг за шагом. Программировать не нужно: код за вас пишет Claude Code.",
+    chapters: [
+      ["0:00", "Что получится в конце"],
+      ["0:25", "Из чего состоит бот: 4 детали"],
+      ["1:04", "Шаг 1. Создаём бота в BotFather"],
+      ["1:47", "Шаг 2. Ключ API: регистрация и оплата"],
+      ["2:40", "Лимит расходов, чтобы не потратить лишнего"],
+      ["2:48", "Шаг 3. Код пишет Claude Code"],
+      ["3:16", "Готовое задание для Claude Code"],
+      ["3:39", "Шаг 4. Переселяем бота на сервер"],
+      ["4:12", "Шаг 5. Подключаем канал"],
+      ["4:21", "Домашнее задание"]
+    ],
+    pdfNote: "Схема бота, пошаговые инструкции «Создать бота» и «Ключ API», готовое задание для Claude Code и памятка по безопасности."
+  },
+  {
+    id: "lesson-2b",
+    num: "2",
+    part: "часть 2 из 2",
+    title: "Контент-завод: редакция из агентов",
+    duration: "3:21",
+    poster: "assets/l2b.jpg",
+    pdf: "assets/lesson-2b.pdf",
+    kinescope: "",
+    intro: "Бот построен — теперь нанимаем ему сотрудников: агентов, которые ищут новости, пишут посты вашим голосом и проверяют цифры. Последнее слово всегда за вами.",
+    chapters: [
+      ["0:00", "Где мы остановились"],
+      ["0:29", "Кто работает в редакции бота Академии"],
+      ["1:16", "Как написать инструкцию агенту: 5 частей"],
+      ["1:34", "Как добавить агента в бота"],
+      ["1:52", "Как научить бота писать вашим голосом"],
+      ["2:12", "Главное правило: число без источника не публикуем"],
+      ["2:32", "Кнопки: решаете вы"],
+      ["2:48", "Бот учится на ваших правках"],
+      ["3:04", "Домашнее задание"]
+    ],
+    pdfNote: "Таблица агентов, шаблон инструкции агента и готовая фраза «Правка → правило»."
+  }
+];
+
+const UPCOMING = [
+  "Видео в Higgsfield: от образа до ролика",
+  "Видео без студии: монтаж кодом",
+  "Мой голос без меня",
+  "ИИ-аналитик продаж",
+  "Презентация за вечер",
+  "Личный ИИ-ассистент в Telegram и своя газета",
+  "Подготовка к важному разговору",
+  "Почта и рутина",
+  "Хитрости и тонкости из практики",
+  "Безопасность и бэкап"
+];
+
+/* ======================================================================
+   Дальше — логика страницы. Править не нужно.
+   ====================================================================== */
+(function(){
+  "use strict";
+  const $ = (s, r) => (r || document).querySelector(s);
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const isStatic = /[?&]static\b/.test(location.search);
+  if (isStatic) document.documentElement.classList.add("static");
+  const noAnim = reduced || isStatic;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const X = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"/></svg>';
+  const RESTORE = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2.5" width="8" height="7"/><path d="M2 4h8"/></svg>';
+  const CLOCK = '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3.2l2 1.3"/></svg>';
+
+  /* ---- Шапка/футер из данных ---- */
+  $("#author-name").textContent = COURSE.author;
+  $("#author-foot").textContent = COURSE.author;
+  $("#menu-author").textContent = COURSE.author;
+  $("#schedule").textContent = COURSE.schedule;
+  const tg = $("#tg-link"); tg.href = COURSE.telegram; tg.textContent = COURSE.telegram.replace(/^https?:\/\//, "");
+  const n = LESSONS.length;
+  $("#lesson-count").textContent = n + " видео";
+  document.title = COURSE.title + " — видеокурс";
+
+  /* ---- Печать лида в «Блокноте» ---- */
+  (function type(){
+    const el = $("#lead"); const text = COURSE.lead; el.textContent = text;
+    if (noAnim) return;
+    el.textContent = ""; const caret = document.createElement("span"); caret.className = "caret"; el.appendChild(caret);
+    let i = 0; const node = document.createTextNode(""); el.insertBefore(node, caret);
+    const step = () => { node.data = text.slice(0, ++i); if (i < text.length) setTimeout(step, text[i-1] === "." || text[i-1] === ":" ? 180 : 14); };
+    setTimeout(step, 700);
+  })();
+
+  /* ---- Рендер уроков ---- */
+  const wrap = $("#lessons");
+  LESSONS.forEach((L, idx) => {
+    const art = document.createElement("article");
+    art.className = "lesson reveal" + (idx ? " d" + Math.min(idx, 3) : "");
+    art.id = L.id;
+    const part = L.part ? '<b>' + esc(L.part) + '</b> · ' : "";
+    const chapters = L.chapters.map(([t, name]) =>
+      '<li><button class="ch" type="button" data-t="' + esc(t) + '" aria-disabled="' + (L.kinescope ? "false" : "true") + '"' + (L.kinescope ? "" : ' title="Видео скоро появится"') + '><span class="tc">' + esc(t) + '</span><span>' + esc(name) + '</span></button></li>').join("");
+    art.innerHTML =
+      '<div class="win">' +
+        '<div class="win-bar">' +
+          '<button class="lhead" type="button" aria-expanded="false" aria-controls="' + L.id + '-body" id="' + L.id + '-btn">' +
+            '<span class="num" aria-hidden="true">' + esc(L.num) + '</span>' +
+            '<span class="lt"><span class="t">' + esc(L.title) + '</span><span class="m">' + part + 'Урок ' + esc(L.num) + '</span></span>' +
+            '<span class="dur">' + CLOCK + '<span>' + esc(L.duration) + '</span></span>' +
+            '<span class="xbtn ghost" aria-hidden="true">' + RESTORE + '</span>' +
+            '<span class="xbtn" aria-hidden="true">' + X + '</span>' +
+          '</button>' +
+        '</div>' +
+        '<div class="win-body lbody" id="' + L.id + '-body" role="region" aria-labelledby="' + L.id + '-btn">' +
+          '<div class="lgrid">' +
+            '<div>' +
+              '<div class="video" data-video></div>' +
+              '<p class="intro">' + esc(L.intro) + '</p>' +
+              '<div class="pdf"><span class="pico" aria-hidden="true"></span><div>' +
+                '<a class="btn btn-paper" href="' + esc(L.pdf) + '" target="_blank" rel="noopener"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 3v10M6 9l4 4 4-4M4 17h12"/></svg>Открыть конспект (PDF)</a>' +
+                '<p>' + esc(L.pdfNote) + '</p>' +
+              '</div></div>' +
+            '</div>' +
+            '<div>' +
+              '<ol class="chapters" aria-label="Оглавление урока"><li class="chapters-h" aria-hidden="true"><span>Оглавление</span><span>' + L.chapters.length + ' глав</span></li>' + chapters + '</ol>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    wrap.appendChild(art);
+  });
+
+  /* ---- Видео: плеер или заглушка ---- */
+  function mountVideo(L, art){
+    const box = $("[data-video]", art);
+    if (box.dataset.ready) return; box.dataset.ready = "1";
+    if (L.kinescope){
+      const f = document.createElement("iframe");
+      f.src = "https://kinescope.io/embed/" + encodeURIComponent(L.kinescope);
+      f.allow = "autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write";
+      f.setAttribute("allowfullscreen", ""); f.loading = "lazy"; f.title = "Урок " + L.num + ". " + L.title;
+      box.appendChild(f);
+    } else {
+      box.innerHTML =
+        '<div class="ph"><img src="' + esc(L.poster) + '" alt="" loading="lazy" width="1280" height="720">' +
+          '<div class="ph-dlg" role="status"><div class="win-bar"><span class="ico"></span><span class="ttl">Плеер</span><span class="xbtn" aria-hidden="true">' + X + '</span></div>' +
+          '<div class="win-body"><p class="t">Видео скоро появится здесь</p><p class="s">Урок ' + esc(L.num) + (L.part ? ", " + esc(L.part) : "") + ' · ' + esc(L.duration) + '</p><div class="ldbar" aria-hidden="true"><i></i></div></div></div>' +
+        '</div>';
+    }
+  }
+
+  /* ---- Аккордеон ---- */
+  const taskBtn = $("#task"), taskLabel = $("#task-label");
+  let current = null;
+  function toSec(t){ const p = t.split(":").map(Number); return p.length === 3 ? p[0]*3600 + p[1]*60 + p[2] : p[0]*60 + (p[1] || 0); }
+  function openLesson(id, opts){
+    opts = opts || {};
+    const art = document.getElementById(id); if (!art) return;
+    const L = LESSONS.find(l => l.id === id);
+    if (current && current !== art) closeLesson(current, true);
+    mountVideo(L, art);
+    art.classList.add("open"); $(".lhead", art).setAttribute("aria-expanded", "true");
+    current = art;
+    taskLabel.textContent = "Урок " + L.num + " · " + L.title; taskBtn.hidden = false; requestAnimationFrame(() => taskBtn.classList.add("on"));
+    if (opts.hash !== false && history.replaceState) history.replaceState(null, "", "#" + id);
+    if (opts.scroll && !isStatic) setTimeout(() => art.scrollIntoView({ behavior: noAnim ? "auto" : "smooth", block: "start" }), 30);
+  }
+  function closeLesson(art, silent){
+    art.classList.remove("open"); $(".lhead", art).setAttribute("aria-expanded", "false");
+    if (current === art) current = null;
+    if (!silent){ taskBtn.classList.remove("on"); setTimeout(() => { if (!current) taskBtn.hidden = true; }, 260); if (history.replaceState) history.replaceState(null, "", location.pathname + location.search); }
+  }
+  wrap.addEventListener("click", e => {
+    const head = e.target.closest(".lhead");
+    if (head){ const art = head.closest(".lesson"); art.classList.contains("open") ? closeLesson(art) : openLesson(art.id, { scroll:true }); return; }
+    const ch = e.target.closest(".ch");
+    if (ch){
+      if (ch.getAttribute("aria-disabled") === "true") return;
+      const art = ch.closest(".lesson"); const L = LESSONS.find(l => l.id === art.id);
+      const f = $("iframe", art); if (!f) return;
+      /* Переход к таймкоду: перезагружаем плеер с параметром времени */
+      f.src = "https://kinescope.io/embed/" + encodeURIComponent(L.kinescope) + "?t=" + toSec(ch.dataset.t) + "&autoplay=1";
+      $(".video", art).scrollIntoView({ behavior: noAnim ? "auto" : "smooth", block: "center" });
+    }
+  });
+  taskBtn.addEventListener("click", () => { if (current) current.scrollIntoView({ behavior: noAnim ? "auto" : "smooth", block:"start" }); });
+  document.querySelectorAll("[data-open]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); openLesson(a.dataset.open, { scroll:true }); }));
+
+  /* ---- Хеш #lesson-1 ---- */
+  function fromHash(){
+    const id = decodeURIComponent(location.hash.slice(1)) || new URLSearchParams(location.search).get("open") || "";
+    if (LESSONS.some(l => l.id === id)) openLesson(id, { scroll:true, hash:false });
+  }
+  window.addEventListener("hashchange", fromHash);
+
+  /* ---- Скоро ---- */
+  $("#upcoming").innerHTML = UPCOMING.map(t => '<li aria-disabled="true"><i aria-hidden="true"></i><span>' + esc(t) + '</span></li>').join("");
+
+  /* ---- Меню «Пуск» ---- */
+  const menu = $("#menu"), start = $("#start"), scrim = $("#scrim"), list = $("#menu-list");
+  list.innerHTML = LESSONS.map(L =>
+    '<a href="#' + L.id + '" data-menu="' + L.id + '"><span class="mn" aria-hidden="true">' + esc(L.num) + '</span><span>' + esc(L.title) + '<small>' + (L.part ? esc(L.part) + ' · ' : '') + esc(L.duration) + '</small></span></a>').join("") +
+    '<div class="sep"></div>' +
+    '<a href="#soon"><span class="mi" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 7h12M5.5 1.5v3M10.5 1.5v3"/></svg></span><span>Скоро<small>' + esc(COURSE.schedule) + '</small></span></a>' +
+    '<a href="' + esc(COURSE.telegram) + '" target="_blank" rel="noopener"><span class="mi" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 3h10a1 1 0 011 1v6a1 1 0 01-1 1H7l-3 3v-3H3a1 1 0 01-1-1V4a1 1 0 011-1z"/></svg></span><span>Telegram автора<small>' + esc(COURSE.telegram.replace(/^https?:\/\//, "")) + '</small></span></a>';
+  function setMenu(open){ menu.classList.toggle("open", open); scrim.classList.toggle("open", open); start.setAttribute("aria-expanded", String(open)); }
+  start.addEventListener("click", () => setMenu(!menu.classList.contains("open")));
+  scrim.addEventListener("click", () => setMenu(false));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") setMenu(false); });
+  list.addEventListener("click", e => {
+    const a = e.target.closest("a[data-menu]"); setMenu(false);
+    if (a){ e.preventDefault(); openLesson(a.dataset.menu, { scroll:true }); }
+  });
+  $("#menu-top").addEventListener("click", () => { setMenu(false); window.scrollTo({ top:0, behavior: noAnim ? "auto" : "smooth" }); });
+
+  /* ---- Часы ---- */
+  const clock = $("#clock");
+  function tick(){ const d = new Date(); clock.textContent = String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0"); }
+  tick(); setInterval(tick, 10000);
+
+  /* ---- Появление блоков ---- */
+  const io = ("IntersectionObserver" in window) && !noAnim ? new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } }), { rootMargin:"0px 0px -8% 0px", threshold:.08 }) : null;
+  document.querySelectorAll(".reveal").forEach(el => io ? io.observe(el) : el.classList.add("in"));
+
+  /* ---- Параллакс облаков (только десктоп, только с мышью) ---- */
+  if (!noAnim && window.matchMedia("(min-width: 769px) and (pointer: fine)").matches){
+    const clouds = Array.from(document.querySelectorAll(".cloud")); let raf = 0;
+    const onScroll = () => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; const y = window.scrollY; clouds.forEach(c => { c.style.translate = "0 " + (-y * parseFloat(c.dataset.depth)).toFixed(1) + "px"; }); }); };
+    window.addEventListener("scroll", onScroll, { passive:true }); onScroll();
+  }
+
+  /* ---- Старт ---- */
+  fromHash();
+})();
+</script>
+</body>
+</html>
