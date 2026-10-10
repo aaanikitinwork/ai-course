@@ -692,6 +692,7 @@ const UPCOMING = [
     mountVideo(L, art);
     art.classList.add("open"); $(".lhead", art).setAttribute("aria-expanded", "true");
     current = art;
+    if (window.__aicHit) window.__aicHit(id);
     taskLabel.textContent = "Урок " + L.num + " · " + L.title; taskBtn.hidden = false; requestAnimationFrame(() => taskBtn.classList.add("on"));
     if (opts.hash !== false && history.replaceState) history.replaceState(null, "", "#" + id);
     if (opts.scroll && !isStatic) setTimeout(() => art.scrollIntoView({ behavior: noAnim ? "auto" : "smooth", block: "start" }), 30);
@@ -762,6 +763,59 @@ const UPCOMING = [
 
   /* ---- Старт ---- */
   fromHash();
+})();
+</script>
+<script>
+/* Счётчик уникальных посетителей — только для автора курса.
+   Хранит в браузере лишь случайный номер (localStorage), на сервер уходит
+   этот номер и какой урок открыт. Ни IP, ни cookies, ни сторонних сервисов.
+   Статистика: эта же страница с ?stats=КЛЮЧ (ключ у автора, в коде его нет). */
+(function () {
+  var HOST = "https://62-238-56-43.sslip.io";
+  var vid;
+  try {
+    vid = localStorage.getItem("aic_vid");
+    if (!vid || !/^[A-Za-z0-9]{8,40}$/.test(vid)) {
+      vid = Array.from(crypto.getRandomValues(new Uint8Array(12)), function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+      localStorage.setItem("aic_vid", vid);
+    }
+  } catch (e) { vid = "anon" + Math.random().toString(36).slice(2, 12); }
+  var sent = {};
+  function hit(page) {
+    if (sent[page]) return; sent[page] = 1;
+    try { fetch(HOST + "/hit?v=" + vid + "&p=" + encodeURIComponent(page), { mode: "no-cors", keepalive: true, cache: "no-store" }); } catch (e) {}
+  }
+  var key = new URLSearchParams(location.search).get("stats");
+  if (!key) hit("home");                       // свои заходы со статистикой не считаем
+  window.__aicHit = function (id) { if (!key) hit(id); };
+  var h0 = decodeURIComponent(location.hash.slice(1));   // урок, открытый по ссылке ещё до этого скрипта
+  if (!key && /^lesson-/.test(h0)) hit(h0);
+
+  if (!key) return;
+  var box = document.createElement("div");
+  box.setAttribute("style", "position:fixed;right:16px;top:16px;z-index:9999;width:min(360px,calc(100vw - 32px));max-height:calc(100vh - 120px);overflow:auto;" +
+    "background:#ece9d8;border:4px solid #0a4fd8;border-radius:12px 12px 4px 4px;box-shadow:6px 8px 0 rgba(0,0,40,.35);font:14px/1.45 'Open Sans',Arial,sans-serif;color:#111");
+  box.innerHTML = '<div style="background:linear-gradient(#3a8cff,#0a4fd8 55%,#0838a8);color:#fff;font-weight:700;padding:6px 12px;display:flex;justify-content:space-between">' +
+    '<span>📊 Счётчик — только для вас</span><span id="aic-x" style="cursor:pointer">✕</span></div><div id="aic-b" style="padding:12px 14px">Загрузка…</div>';
+  document.body.appendChild(box);
+  document.getElementById("aic-x").onclick = function () { box.remove(); };
+  var NAMES = { "lesson-0": "Урок 0", "lesson-1": "Урок 1", "lesson-2a": "Урок 2, ч.1", "lesson-2b": "Урок 2, ч.2" };
+  fetch(HOST + "/stats.json?k=" + encodeURIComponent(key), { cache: "no-store" })
+    .then(function (r) { if (!r.ok) throw new Error("неверный ключ"); return r.json(); })
+    .then(function (d) {
+      var big = function (n, t) { return '<div style="flex:1;background:#fff;border:2px inset #aaa;padding:8px;text-align:center"><div style="font-size:24px;font-weight:700">' + n + '</div><div style="font-size:12px;color:#555">' + t + '</div></div>'; };
+      var rows = d.by_day.slice(0, 14).map(function (x) {
+        return '<tr><td>' + x.day.slice(8, 10) + '.' + x.day.slice(5, 7) + '</td><td style="text-align:right"><b>' + x.unique + '</b></td><td style="text-align:right">' + x.new + '</td><td style="text-align:right">' + x.views + '</td></tr>';
+      }).join("");
+      var les = Object.keys(d.lessons).map(function (k) { return '<div style="display:flex;justify-content:space-between"><span>' + (NAMES[k] || k) + '</span><b>' + d.lessons[k] + '</b></div>'; }).join("") || '<div style="color:#777">пока никто не открывал</div>';
+      document.getElementById("aic-b").innerHTML =
+        '<div style="display:flex;gap:8px">' + big(d.total_unique, "всего уникальных") + big(d.today_unique, "сегодня") + big(d.week_unique, "за 7 дней") + '</div>' +
+        '<div style="margin-top:12px;font-weight:700">Открывали уроки (уникальных)</div>' + les +
+        '<div style="margin-top:12px;font-weight:700">По дням</div>' +
+        '<table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="color:#555"><td>день</td><td style="text-align:right">уник.</td><td style="text-align:right">новых</td><td style="text-align:right">заходов</td></tr>' + rows + '</table>' +
+        '<div style="margin-top:8px;font-size:12px;color:#666">Обновлено ' + d.updated + ' мск · пересчёт раз в 5 минут · ваши заходы со статистикой не считаются</div>';
+    })
+    .catch(function (e) { document.getElementById("aic-b").textContent = "Не удалось загрузить: " + e.message; });
 })();
 </script>
 </body>
