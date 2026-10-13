@@ -659,11 +659,26 @@ const UPCOMING = [
   if (isStatic) document.documentElement.classList.add("static");
   const noAnim = reduced || isStatic;
   /* ---- Открытие по расписанию ---- */
-  const now = Date.now();
+  /* Время — серверное: часы устройства могут врать. Поправку (сервер минус устройство) берём из заголовка Date
+     ответа GitHub Pages и держим в sessionStorage; если она меняет картину — перерисовываем страницу один раз. */
+  let off = 0;
+  try { off = Number(sessionStorage.getItem("aicOff")) || 0; } catch (e) {}
+  const now = Date.now() + off;
+  fetch(location.pathname + "?t=" + Date.now(), { method: "HEAD", cache: "no-store" }).then(r => {
+    const srv = Date.parse(r.headers.get("date") || "");
+    if (!srv) return;
+    const o = srv - Date.now();
+    if (Math.abs(o - off) < 120000) return;
+    try { sessionStorage.setItem("aicOff", String(o)); } catch (e) { return; }
+    const a = Math.min(Date.now() + off, Date.now() + o), b = Math.max(Date.now() + off, Date.now() + o);
+    const all = LESSONS_ALL.concat(UPCOMING.filter(u => typeof u !== "string"));
+    if (all.some(x => x.opensAt && Date.parse(x.opensAt) > a && Date.parse(x.opensAt) <= b)) location.reload();
+  }).catch(() => {});
   const opensMs = x => x && x.opensAt ? Date.parse(x.opensAt) : 0;
   const isOpen = x => !opensMs(x) || opensMs(x) <= now;
   const WD = ["вс","пн","вт","ср","чт","пт","сб"];
   const whenTxt = ms => { const d = new Date(ms + 3*3600e3); return WD[d.getUTCDay()] + " " + String(d.getUTCDate()).padStart(2,"0") + "." + String(d.getUTCMonth()+1).padStart(2,"0") + " в " + String(d.getUTCHours()).padStart(2,"0") + ":" + String(d.getUTCMinutes()).padStart(2,"0"); };
+  const LESSONS_ALL = LESSONS.slice();
   const lockedLessons = LESSONS.filter(l => !isOpen(l));
   const lockedTitles = new Set(lockedLessons.map(l => l.title));
   LESSONS.splice(0, LESSONS.length, ...LESSONS.filter(isOpen));
