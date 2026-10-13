@@ -365,6 +365,7 @@ h2.px{ font-size:clamp(34px, 4.4vw, 60px); margin:0; }
 html.static *,html.static *::before,html.static *::after{ animation:none !important; transition:none !important; }
 html.static .reveal{ opacity:1; transform:none; }
 html.static .task{ opacity:1; transform:none; }
+.soon-list .opens{display:block;font-size:.85em;opacity:.75;font-weight:600}
 </style>
 </head>
 <body>
@@ -474,7 +475,7 @@ const COURSE = {
   title: "ИИ для себя и для работы",
   author: "Александр Аникитин",
   lead: "Бесплатный видеокурс о том, как пользоваться ИИ без программирования: от первого запроса до собственного бота, который пишет посты для канала. Простым языком, с шаблонами, которые можно скопировать.",
-  schedule: "Новые уроки — по вторникам и четвергам",
+  schedule: "Новые уроки — по вторникам, четвергам и субботам в 11:00",
   telegram: "https://t.me/alexanderanikitin"
 };
 
@@ -574,9 +575,12 @@ const LESSONS = [
   }
 ];
 
+/* Будущие уроки. Строка — просто тема; объект с opensAt — тема с датой открытия.
+   Урок в LESSONS с полем  opensAt: "2026-10-22T11:00:00+03:00"  (время московское)
+   до этого момента не показывается, а в «Скоро» видна дата; в срок открывается сам. */
 const UPCOMING = [
-  "Видео в Higgsfield: от образа до ролика",
-  "Видео без студии: монтаж кодом",
+  { title: "Видео в Higgsfield: от образа до ролика", opensAt: "2026-10-22T11:00:00+03:00" },
+  { title: "Видео без студии: монтаж кодом", opensAt: "2026-10-24T11:00:00+03:00" },
   "Мой голос без меня",
   "Claude управляет компьютером и зачем VS Code",
   "ИИ-аналитик продаж",
@@ -598,6 +602,20 @@ const UPCOMING = [
   const isStatic = /[?&]static\b/.test(location.search);
   if (isStatic) document.documentElement.classList.add("static");
   const noAnim = reduced || isStatic;
+  /* ---- Открытие по расписанию ---- */
+  const now = Date.now();
+  const opensMs = x => x && x.opensAt ? Date.parse(x.opensAt) : 0;
+  const isOpen = x => !opensMs(x) || opensMs(x) <= now;
+  const WD = ["вс","пн","вт","ср","чт","пт","сб"];
+  const whenTxt = ms => { const d = new Date(ms + 3*3600e3); return WD[d.getUTCDay()] + " " + String(d.getUTCDate()).padStart(2,"0") + "." + String(d.getUTCMonth()+1).padStart(2,"0") + " в " + String(d.getUTCHours()).padStart(2,"0") + ":" + String(d.getUTCMinutes()).padStart(2,"0"); };
+  const lockedLessons = LESSONS.filter(l => !isOpen(l));
+  const lockedTitles = new Set(lockedLessons.map(l => l.title));
+  LESSONS.splice(0, LESSONS.length, ...LESSONS.filter(isOpen));
+  const soon = lockedLessons.map(l => ({ title: l.title, opensAt: l.opensAt }))
+    .concat(UPCOMING.map(u => typeof u === "string" ? { title: u } : u).filter(u => !lockedTitles.has(u.title) && !(u.opensAt && isOpen(u) && LESSONS.some(l => l.title === u.title))));
+  /* Страница открыта в момент выхода урока — обновится сама */
+  const nextMs = Math.min(...soon.map(opensMs).filter(ms => ms > now));
+  if (isFinite(nextMs) && nextMs - now < 2147483647) setTimeout(() => location.reload(), nextMs - now + 1500);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const X = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"/></svg>';
   const RESTORE = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2.5" width="8" height="7"/><path d="M2 4h8"/></svg>';
@@ -727,7 +745,7 @@ const UPCOMING = [
   window.addEventListener("hashchange", fromHash);
 
   /* ---- Скоро ---- */
-  $("#upcoming").innerHTML = UPCOMING.map(t => '<li aria-disabled="true"><i aria-hidden="true"></i><span>' + esc(t) + '</span></li>').join("");
+  $("#upcoming").innerHTML = soon.map(u => '<li aria-disabled="true"><i aria-hidden="true"></i><span>' + esc(u.title) + (opensMs(u) > now ? '<small class="opens">откроется ' + esc(whenTxt(opensMs(u))) + '</small>' : '') + '</span></li>').join("");
 
   /* ---- Меню «Пуск» ---- */
   const menu = $("#menu"), start = $("#start"), scrim = $("#scrim"), list = $("#menu-list");
@@ -800,7 +818,7 @@ const UPCOMING = [
     '<span>📊 Счётчик — только для вас</span><span id="aic-x" style="cursor:pointer">✕</span></div><div id="aic-b" style="padding:12px 14px">Загрузка…</div>';
   document.body.appendChild(box);
   document.getElementById("aic-x").onclick = function () { box.remove(); };
-  var NAMES = { "lesson-0": "Урок 0", "lesson-1": "Урок 1", "lesson-2a": "Урок 2, ч.1", "lesson-2b": "Урок 2, ч.2" };
+  var NAMES = { "lesson-0": "Урок 0", "lesson-1": "Урок 1", "lesson-2a": "Урок 2, ч.1", "lesson-2b": "Урок 2, ч.2", "lesson-3": "Урок 3", "lesson-4": "Урок 4" };
   fetch(HOST + "/stats.json?k=" + encodeURIComponent(key), { cache: "no-store" })
     .then(function (r) { if (!r.ok) throw new Error("неверный ключ"); return r.json(); })
     .then(function (d) {
