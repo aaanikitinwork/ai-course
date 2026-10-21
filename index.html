@@ -131,6 +131,22 @@ h2.px{ font-size:clamp(34px, 4.4vw, 60px); margin:0; }
 .win-body{ background:var(--paper); border-radius:0 0 3px 3px; }
 
 /* ----------------------------------------------------------------------
+   Баннер «Углублённый курс» (21.10.2026). Ссылка — PRO_FORM_URL в <script>;
+   пока пусто, кнопки нет.
+---------------------------------------------------------------------- */
+.pro-banner{ padding:clamp(14px,2.4vw,24px) 0 0; position:relative; z-index:2; }
+.pro-banner .win-bar{ background:linear-gradient(180deg,#ffb23a 0%,#f08a12 55%,#c96a05 100%); }
+.pro-banner .win-bar .ico{ background:var(--gold); box-shadow:inset 0 0 0 2px #a35400; }
+.pro-banner .win-body{ display:flex; align-items:center; gap:clamp(14px,2.5vw,28px); padding:clamp(14px,2vw,20px) clamp(16px,2.4vw,26px); flex-wrap:wrap; }
+.pro-banner .pro-ico{ flex:none; width:52px; height:52px; border-radius:12px; display:grid; place-items:center; font-size:28px;
+  background:linear-gradient(180deg,#fff3c4,#ffd84a); box-shadow:inset 0 0 0 2px #e0a800; }
+.pro-banner .pro-txt{ flex:1 1 320px; min-width:0; color:var(--ink); }
+.pro-banner .pro-txt b{ display:block; font-size:clamp(17px,1.7vw,20px); margin-bottom:4px; color:var(--xp-dark); }
+.pro-banner .pro-txt p{ margin:0; font-size:clamp(15px,1.4vw,16.5px); line-height:1.5; color:#2a3550; }
+.pro-banner .btn{ flex:none; }
+@media (max-width:640px){ .pro-banner .pro-ico{ display:none; } .pro-banner .btn{ width:100%; justify-content:center; } }
+
+/* ----------------------------------------------------------------------
    Hero
 ---------------------------------------------------------------------- */
 .hero{ padding:clamp(28px, 6vw, 72px) 0 clamp(40px, 7vw, 96px); min-height:min(calc(100vh - var(--taskbar-h)), 860px); display:flex; align-items:center; }
@@ -381,6 +397,23 @@ html.static .task{ opacity:1; transform:none; }
 
 <div class="page">
 
+  <!-- БАННЕР: углублённый курс -->
+  <aside class="pro-banner" id="pro-banner" aria-label="Углублённый курс">
+    <div class="container">
+      <div class="win reveal">
+        <div class="win-bar"><span class="ico" aria-hidden="true"></span><span class="ttl">Новое — углублённый курс</span><button class="xbtn" type="button" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></div>
+        <div class="win-body">
+          <span class="pro-ico" aria-hidden="true">🚀</span>
+          <div class="pro-txt">
+            <b>Друзья, мы уже готовим для вас углублённый курс</b>
+            <p>С расширенной практикой. Хотите занять место первыми — оставьте свои контакты по ссылке.</p>
+          </div>
+          <a class="btn btn-green" id="pro-btn" href="#" target="_blank" rel="noopener" hidden>Занять место</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+
   <!-- HERO -->
   <header class="hero">
     <div class="container hero-grid">
@@ -479,6 +512,8 @@ const COURSE = {
   telegram: "https://t.me/alexanderanikitin"
 };
 
+const PRO_FORM_URL = "";  // ссылка на Яндекс Форму для баннера «Углублённый курс»; пусто — кнопки нет
+(function(){ var b=document.getElementById('pro-btn'); if(b && PRO_FORM_URL){ b.href=PRO_FORM_URL; b.hidden=false; } })();
 const LESSONS = [
   {
     id: "lesson-0",
