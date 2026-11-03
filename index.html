@@ -247,7 +247,7 @@ h2.px{ font-size:clamp(34px, 4.4vw, 60px); margin:0; }
 .ldbar{ height:16px; border:1px solid #9bb0d9; border-radius:3px; background:#fff; overflow:hidden; position:relative; box-shadow:inset 0 1px 2px rgba(0,0,0,.15); }
 .ldbar i{ position:absolute; top:2px; bottom:2px; left:-60px; width:54px; background:repeating-linear-gradient(90deg,#3f8bff 0 10px,transparent 10px 14px); animation:ld 2.4s linear infinite; border-radius:2px; }
 @keyframes ld{ to{ left:100% } }
-.intro{ margin:16px 0 0; font-size:16.5px; line-height:1.62; }
+.intro{ white-space:pre-line; margin:16px 0 0; font-size:16.5px; line-height:1.62; }
 .pdf{ margin-top:16px; padding:14px 16px; border:1px solid #e9d99a; border-radius:7px; background:linear-gradient(180deg,#fff9df 0%,#fff2bf 100%); display:grid; grid-template-columns:auto minmax(0,1fr); gap:14px; align-items:center; box-shadow:inset 0 1px 0 #fff; }
 .pdf .pico{ width:44px; height:54px; position:relative; background:#fff; border:1.5px solid var(--xp-dark); border-radius:3px; box-shadow:2px 2px 0 var(--xp-dark); }
 .pdf .pico::before{ content:""; position:absolute; right:-1.5px; top:-1.5px; width:14px; height:14px; background:var(--gold); border-left:1.5px solid var(--xp-dark); border-bottom:1.5px solid var(--xp-dark); }
@@ -826,7 +826,192 @@ const LESSONS = [
       ["5:34", "Домашнее задание"]
     ],
     pdfNote: "Запросы «Контекст», «Структура», «Глазами комиссии», «Вопросы» и «Репетиция», шкала пяти минут, формула ответа «коротко → пример → вывод»."
-  }
+  },
+  {
+    "id": "lesson-11",
+    "opensAt": "2026-11-10T11:00:00+03:00",
+    "num": "11",
+    "title": "Почта и рутина",
+    "duration": "7:49",
+    "poster": "assets/l11.jpg",
+    "pdf": "assets/lesson-11.pdf",
+    "kinescope": "3DqvszGoN6MX9aKWMag95N",
+    "intro": "Условный пример: ИИ придумал скидку клиенту, который мог уже оплатить. Учимся сортировать обращения, задавать подтверждённые факты, готовить уместные черновики и проверять обещания. Настоящая почта не подключается, отправку контролирует человек.",
+    "chapters": [
+        [
+            "0:00",
+            "Нельзя отправлять"
+        ],
+        [
+            "0:49",
+            "Три разных письма"
+        ],
+        [
+            "1:52",
+            "Карточка фактов"
+        ],
+        [
+            "2:33",
+            "Убрать догадки"
+        ],
+        [
+            "3:45",
+            "Проверить статус"
+        ],
+        [
+            "5:01",
+            "Редактор с фактами"
+        ],
+        [
+            "5:54",
+            "Конвейер черновиков"
+        ],
+        [
+            "7:01",
+            "Домашнее задание"
+        ]
+    ],
+    "pdfNote": "Карточка фактов, два полных запроса, статусы оплаты, проверка перед отправкой и домашнее задание."
+},
+  {
+    "id": "lesson-12",
+    "opensAt": "2026-11-12T11:00:00+03:00",
+    "num": "12",
+    "title": "Хитрости и тонкости из практики",
+    "duration": "7:37",
+    "poster": "assets/l12.jpg",
+    "pdf": "assets/lesson-12.pdf",
+    "kinescope": "orf277EaNq4Gptcu7e7XP4",
+    "intro": "Учебные примеры: правильное деление с неверным выводом, перепутанные периоды, распознавание суммы в документе и рекламный гайд. Пять приёмов проверки: рамка расчёта, точные даты, критик с доказательствами, доступ к документу и отделение обещаний от фактов.",
+    "chapters": [
+        [
+            "0:00",
+            "Верно посчитал. И что?"
+        ],
+        [
+            "0:46",
+            "Рамка расчёта"
+        ],
+        [
+            "1:57",
+            "Даты без догадок"
+        ],
+        [
+            "2:58",
+            "Проверяющий"
+        ],
+        [
+            "4:03",
+            "Путь не даёт доступ"
+        ],
+        [
+            "5:38",
+            "Кодовое слово"
+        ],
+        [
+            "6:40",
+            "Домашнее задание"
+        ]
+    ],
+    "pdfNote": "Формулы, даты, два полных запроса, правила работы с PDF и проверка рекламных обещаний."
+},
+  {
+    "id": "lesson-13",
+    "opensAt": "2026-11-14T11:00:00+03:00",
+    "num": "13",
+    "title": "Безопасность и бэкап",
+    "duration": "8:37",
+    "poster": "assets/l13.jpg",
+    "pdf": "assets/lesson-13.pdf",
+    "kinescope": "avAP26MmK71fHWjkmLQreY",
+    "intro": "Финал курса: какие данные не нужны ИИ, как обезличивать материалы и ограничивать доступ, чем синхронизация отличается от резервной копии и как безопасно проверить восстановление тестового файла. Без настоящих секретов и удаления исходников.",
+    "chapters": [
+        [
+            "0:00",
+            "Копия исчезла следом"
+        ],
+        [
+            "0:38",
+            "Что не нужно чату"
+        ],
+        [
+            "1:48",
+            "Имени недостаточно"
+        ],
+        [
+            "3:06",
+            "Приватность и доступ"
+        ],
+        [
+            "4:28",
+            "Синхронизация ≠ бэкап"
+        ],
+        [
+            "5:44",
+            "Паспорт бэкапа"
+        ],
+        [
+            "6:35",
+            "Восстановить и открыть"
+        ],
+        [
+            "7:27",
+            "Три действия сегодня"
+        ]
+    ],
+    "pdfNote": "Минимизация данных, приватность, план резервирования, полный запрос и безопасная проверка восстановления."
+},
+  {
+    "id": "lesson-bonus",
+    "opensAt": "2026-11-17T11:00:00+03:00",
+    "num": "Бонус",
+    "label": "Бонус",
+    "title": "ИИ в бизнесе",
+    "duration": "3:17",
+    "poster": "assets/lbonus.jpg",
+    "pdf": "assets/lesson-bonus.pdf",
+    "kinescope": "3zydZy1AnDqAs9q9nU4ij1",
+    "intro": "Все вокруг внедряют ИИ. А у вас уже есть план? 🪐\n\nЧасто бывает так: идей много, пилотов ноль, а команда ждёт, что вы скажете, с чего начать. Разобраться с этим можно за одну встречу.\n\n🤖 Менторская сессия по ИИ от Академии инвестиций — индивидуальная 3-часовая встреча для руководителей с практиком, который каждый день внедряет ИИ в собственных проектах: боты, видео, аналитика продаж. Без лекций и общих слов — только ваша задача и ваш бизнес.\n\nЗа три часа вы:\n🔘 превратите размытое «нам нужен ИИ» в конкретный кейс с понятным эффектом\n🔘 своими руками проверите идею на ИИ-инструментах прямо на сессии\n🔘 поймёте, какие данные можно доверить ИИ, а какие нет, и как запустить решение безопасно\n🔘 уйдёте с планом пилота: первые шаги, ответственные и метрики результата\n\n⚡️ Главное — вы научитесь сами принимать решения по ИИ и вести внедрение, а не зависеть от подрядчиков и хайпа.\n\nДля подробностей пишите @alexanderanikitin",
+    "chapters": [
+        [
+            "0:00",
+            "Реклама или продажи?"
+        ],
+        [
+            "0:18",
+            "Связываем рекламу, CRM и оплаченные заказы"
+        ],
+        [
+            "0:45",
+            "Два рекламных канала"
+        ],
+        [
+            "1:02",
+            "Считаем стоимость оплаченного заказа"
+        ],
+        [
+            "1:28",
+            "Исследуем рынок: факты и гипотезы"
+        ],
+        [
+            "1:53",
+            "Сегменты и настройка воронки"
+        ],
+        [
+            "2:20",
+            "Проверяем изменения"
+        ],
+        [
+            "2:37",
+            "Один приоритетный узел за три часа"
+        ],
+        [
+            "3:07",
+            "Ваша задача на сессии"
+        ]
+    ],
+    "pdfNote": "Связка рекламы, CRM и оплат, экономика каналов, исследование рынка и план проверки воронки."
+}
 ];
 
 /* Будущие уроки. Строка — просто тема; объект с opensAt — тема с датой открытия.
@@ -835,9 +1020,6 @@ const LESSONS = [
 const UPCOMING = [
   { num: "3", title: "Видео в Higgsfield: от образа до ролика", opensAt: "2026-10-22T11:00:00+03:00" },
   { num: "4", title: "Видео без студии: монтаж кодом", opensAt: "2026-10-24T11:00:00+03:00" },
-  { num: "11", title: "Почта и рутина", opensAt: "2026-11-10T11:00:00+03:00" },
-  { num: "12", title: "Хитрости и тонкости из практики", opensAt: "2026-11-12T11:00:00+03:00" },
-  { num: "13", title: "Безопасность и бэкап", opensAt: "2026-11-14T11:00:00+03:00" }
 ];
 
 /* ======================================================================
@@ -874,7 +1056,7 @@ const UPCOMING = [
   const lockedLessons = LESSONS.filter(l => !isOpen(l));
   const lockedTitles = new Set(lockedLessons.map(l => l.title));
   LESSONS.splice(0, LESSONS.length, ...LESSONS.filter(isOpen));
-  const soon = lockedLessons.map(l => ({ title: "Урок " + l.num + (l.part ? " (" + l.part + ")" : "") + ". " + l.title, opensAt: l.opensAt }))
+  const soon = lockedLessons.map(l => ({ title: (l.label || "Урок " + l.num) + (l.part ? " (" + l.part + ")" : "") + ". " + l.title, opensAt: l.opensAt }))
     .concat(UPCOMING.map(u => typeof u === "string" ? { title: u } : u).filter(u => !lockedTitles.has(u.title) && !(u.opensAt && isOpen(u) && LESSONS.some(l => l.title === u.title))));
   /* Страница открыта в момент выхода урока — обновится сама */
   const nextMs = Math.min(...soon.map(opensMs).filter(ms => ms > now));
@@ -918,7 +1100,7 @@ const UPCOMING = [
         '<div class="win-bar">' +
           '<button class="lhead" type="button" aria-expanded="false" aria-controls="' + L.id + '-body" id="' + L.id + '-btn">' +
             '<span class="num" aria-hidden="true">' + esc(L.num) + '</span>' +
-            '<span class="lt"><span class="t">' + esc(L.title) + '</span><span class="m">' + part + 'Урок ' + esc(L.num) + '</span></span>' +
+            '<span class="lt"><span class="t">' + esc(L.title) + '</span><span class="m">' + part + esc(L.label || 'Урок ' + L.num) + '</span></span>' +
             '<span class="dur">' + CLOCK + '<span>' + esc(L.duration) + '</span></span>' +
             '<span class="xbtn ghost" aria-hidden="true">' + RESTORE + '</span>' +
             '<span class="xbtn" aria-hidden="true">' + X + '</span>' +
@@ -951,13 +1133,13 @@ const UPCOMING = [
       const f = document.createElement("iframe");
       f.src = "https://kinescope.io/embed/" + encodeURIComponent(L.kinescope);
       f.allow = "autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write";
-      f.setAttribute("allowfullscreen", ""); f.loading = "lazy"; f.title = "Урок " + L.num + ". " + L.title;
+      f.setAttribute("allowfullscreen", ""); f.loading = "lazy"; f.title = (L.label || "Урок " + L.num) + ". " + L.title;
       box.appendChild(f);
     } else {
       box.innerHTML =
         '<div class="ph"><img src="' + esc(L.poster) + '" alt="" loading="lazy" width="1280" height="720">' +
           '<div class="ph-dlg" role="status"><div class="win-bar"><span class="ico"></span><span class="ttl">Плеер</span><span class="xbtn" aria-hidden="true">' + X + '</span></div>' +
-          '<div class="win-body"><p class="t">Видео скоро появится здесь</p><p class="s">Урок ' + esc(L.num) + (L.part ? ", " + esc(L.part) : "") + ' · ' + esc(L.duration) + '</p><div class="ldbar" aria-hidden="true"><i></i></div></div></div>' +
+          '<div class="win-body"><p class="t">Видео скоро появится здесь</p><p class="s">' + esc(L.label || 'Урок ' + L.num) + (L.part ? ", " + esc(L.part) : "") + ' · ' + esc(L.duration) + '</p><div class="ldbar" aria-hidden="true"><i></i></div></div></div>' +
         '</div>';
     }
   }
@@ -975,7 +1157,7 @@ const UPCOMING = [
     art.classList.add("open"); $(".lhead", art).setAttribute("aria-expanded", "true");
     current = art;
     if (window.__aicHit) window.__aicHit(id);
-    taskLabel.textContent = "Урок " + L.num + " · " + L.title; taskBtn.hidden = false; requestAnimationFrame(() => taskBtn.classList.add("on"));
+    taskLabel.textContent = (L.label || "Урок " + L.num) + " · " + L.title; taskBtn.hidden = false; requestAnimationFrame(() => taskBtn.classList.add("on"));
     if (opts.hash !== false && history.replaceState) history.replaceState(null, "", "#" + id);
     if (opts.scroll && !isStatic) setTimeout(() => art.scrollIntoView({ behavior: noAnim ? "auto" : "smooth", block: "start" }), 30);
   }
